@@ -350,6 +350,45 @@ class TestDAG {
         assertEquals(setOf(3, 4), dag[1].ends())
         assertEquals(setOf(7, 9), dag[5].ends())
     }
+
+    @Test
+    fun notADAG0() {
+        val dag = DAG(1)
+        assertFailsWith(IllegalArgumentException::class){
+            dag.addEdge(1, 1)
+        }
+    }
+
+    @Test
+    fun notADAG1() {
+        val dag = DAG(1, 2)
+        dag.addEdge(1, 2)
+        assertFailsWith(IllegalArgumentException::class){
+            dag.addEdge(2, 1)
+        }
+    }
+
+    @Test
+    fun notADAG2() {
+        val dag = DAG(1, 2, 3)
+        dag.addEdge(1, 2)
+        dag.addEdge(2, 3)
+        assertFailsWith(IllegalArgumentException::class){
+            dag.addEdge(3, 1)
+        }
+    }
+
+    @Test
+    fun notADAG3() {
+        val dag = DAG(1, 2, 3, 4, 5)
+        dag.addEdge(1, 2)
+        dag.addEdge(2, 3)
+        dag.addEdge(3, 4)
+        dag.addEdge(4, 5)
+        assertFailsWith(IllegalArgumentException::class){
+            dag.addEdge(5, 1)
+        }
+    }
 }
 
 fun <T> List<Pair<T, T>>.indexOf(a: T, b: T): Int {

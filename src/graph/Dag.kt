@@ -47,6 +47,9 @@ class DAG<T>(nodes: Collection<T>) {
     }
 
     fun addEdge(from: T, to: T): Edge<T> {
+        if (from in this[to].nodes()){
+            throw IllegalArgumentException("You're breaking DAG rules by create a cycle")
+        }
         var edge = connection(from, to)
         fixConnection(edge)
         return edge
