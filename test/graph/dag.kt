@@ -142,7 +142,17 @@ class TestDAG {
             addEdge(6, 7)
             addEdge(6, 9)
         }
-        assertEquals(listOf(1, 2, 3, 4, 5, 6, 8, 7, 9), dag[1].bfs())
+        val bfs = dag[1].bfs()
+        assertEquals(setOf(1, 2, 3, 4, 5, 6, 8, 7, 9), bfs.toSet())
+        assertEquals(0, bfs.indexOf(1))
+        assert(4 > bfs.indexOf(2))
+        assert(4 > bfs.indexOf(3))
+        assert(4 > bfs.indexOf(4))
+        assert(4 <= bfs.indexOf(5))
+        assert(4 <= bfs.indexOf(6))
+        assert(4 <= bfs.indexOf(8))
+        assert(7 <= bfs.indexOf(7))
+        assert(7 <= bfs.indexOf(9))
     }
 
     @Test
@@ -169,7 +179,8 @@ class TestDAG {
             addEdge(6, 7)
             addEdge(6, 9)
         }
-        assertEquals(listOf(
+        val bfs = dag[1].bfsEdges()
+        assertEquals(setOf(
                 Pair(1, 2),
                 Pair(1, 3),
                 Pair(1, 4),
@@ -178,7 +189,16 @@ class TestDAG {
                 Pair(3, 6),
                 Pair(3, 8),
                 Pair(6, 7),
-                Pair(6, 9)), dag[1].bfsEdges())
+                Pair(6, 9)), bfs.toSet())
+        assert(3 > bfs.indexOf(1, 2))
+        assert(3 > bfs.indexOf(1, 3))
+        assert(3 > bfs.indexOf(1, 4))
+        assertEquals(3, bfs.indexOf(2, 4))
+        assert(6 >= bfs.indexOf(3, 5))
+        assert(6 >= bfs.indexOf(3, 6))
+        assert(6 >= bfs.indexOf(3, 8))
+        assert(9 >= bfs.indexOf(6, 7))
+        assert(9 >= bfs.indexOf(6, 9))
     }
 
     @Test
@@ -190,7 +210,10 @@ class TestDAG {
             addEdge(2, 4)
             addEdge(3, 4)
         }
-        assertEquals(listOf(1, 2, 4, 3), dag[1].dfs())
+        val dfs = dag[1].dfs()
+        assertEquals(setOf(1, 2, 4, 3), dfs.toSet())
+        assertEquals(0, dfs.indexOf(1))
+        assertEquals(2, dfs.indexOf(4))
     }
 
     @Test
@@ -207,9 +230,19 @@ class TestDAG {
             addEdge(6, 7)
             addEdge(6, 9)
         }
-        assertEquals(listOf(1, 2, 4, 3, 5, 6, 7, 9, 8), dag[1].dfs())
+        val dfs = dag[1].dfs()
+        assertEquals(setOf(1, 2, 4, 3, 5, 6, 7, 9, 8),
+                dfs.toSet())
+        assertEquals(0, dfs.indexOf(1))
+        assert(dfs.indexOf(1) < dfs.indexOf(3))
+        assert(dfs.indexOf(1) < dfs.indexOf(2))
+        assert(dfs.indexOf(1) < dfs.indexOf(4))
+        assert(dfs.indexOf(3) < dfs.indexOf(5))
+        assert(dfs.indexOf(3) < dfs.indexOf(6))
+        assert(dfs.indexOf(3) < dfs.indexOf(8))
+        assert(dfs.indexOf(6) < dfs.indexOf(7))
+        assert(dfs.indexOf(6) < dfs.indexOf(9))
     }
-
 
     @Test
     fun dfsEdges() {
@@ -225,17 +258,20 @@ class TestDAG {
             addEdge(6, 7)
             addEdge(6, 9)
         }
-        assertEquals(listOf(
-                Pair(1, 2),
-                Pair(2, 4),
-                Pair(1, 3),
-                Pair(3, 5),
-                Pair(3, 6),
-                Pair(6, 7),
-                Pair(6, 9),
-                Pair(3, 8),
+        val dfs = dag[1].dfsEdges()
+        assertEquals(setOf(
+                Pair(1, 2), Pair(2, 4),
+                Pair(1, 3), Pair(3, 5),
+                Pair(3, 6), Pair(6, 7),
+                Pair(6, 9), Pair(3, 8),
                 Pair(1, 4)
-                ), dag[1].dfsEdges())
+        ), dfs.toSet())
+        assert(dfs.indexOf(1, 2) < dfs.indexOf(2, 4))
+        assert(dfs.indexOf(1, 3) < dfs.indexOf(3, 5))
+        assert(dfs.indexOf(1, 3) < dfs.indexOf(3, 6))
+        assert(dfs.indexOf(1, 3) < dfs.indexOf(3, 8))
+        assert(dfs.indexOf(3, 6) < dfs.indexOf(6, 7))
+        assert(dfs.indexOf(3, 6) < dfs.indexOf(6, 9))
     }
 
     @Test
@@ -313,7 +349,10 @@ class TestDAG {
         }
         assertEquals(setOf(3, 4), dag[1].ends())
         assertEquals(setOf(7, 9), dag[5].ends())
-
     }
+}
+
+fun <T> List<Pair<T, T>>.indexOf(a: T, b: T): Int {
+    return indexOf(Pair(a, b))
 }
 
